@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Confirm Dialog – Antigravity</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    /* ── Confirm overlay & card ── */
+    .confirm-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.75);
+      z-index: 400;
+      align-items: center;
+      justify-content: center;
+    }
+    .confirm-overlay.visible { display: flex; }
+
+    .confirm-card {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 20px;
+      padding: 28px 28px 24px;
+      width: 100%;
+      max-width: 320px;
+      margin: 20px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+    }
+    .confirm-card .ct  { font-size:16px; font-weight:600; color:#fff; margin-bottom:8px; }
+    .confirm-card .ce  { font-size:12px; color:var(--orange); margin-bottom:6px; word-break:break-all; }
+    .confirm-card .cm  { font-size:13px; color:var(--text-dim); }
+
+    .confirm-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .confirm-actions .btn { height:40px; padding:0 20px; min-width:90px; border-radius:10px; }
+
+    @media (max-width: 600px) {
+      .confirm-card { border-radius:18px; padding:24px 22px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <!--
+    CONFIRM DIALOG COMPONENT
+    Copy styles + HTML block into index.html
+  -->
+  <div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-card">
+      <p class="ct" id="confirmTitle"></p>
+      <p class="ce" id="confirmEmail"></p>
+      <p class="cm" id="confirmMsg"></p>
+      <div class="confirm-actions">
+        <button class="btn btn-ghost" id="confirmCancel">Cancel</button>
+        <button class="btn btn-primary" id="confirmOk"></button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
