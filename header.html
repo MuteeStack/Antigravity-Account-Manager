@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Header – Antigravity</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    /* ── Header component ── */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 36px;
+      gap: 16px;
+    }
+    .header-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: -.2px;
+    }
+    .header-title span { color: var(--orange); }
+    .header-actions    { display: flex; gap: 8px; flex-shrink: 0; }
+
+    @media (max-width: 768px) {
+      .header        { margin-bottom: 24px; }
+      .header-title  { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <!--
+    HEADER COMPONENT
+    Import this file's <style> block and copy the <header> HTML into index.html
+  -->
+  <header class="header">
+    <h1 class="header-title">Antigravity <span>Account Manager</span></h1>
+    <div class="header-actions">
+      <button class="btn btn-ghost" id="btnClearAll">Clear All</button>
+      <button class="btn btn-primary" id="btnAddAccount">+ Add</button>
+    </div>
+  </header>
+</body>
+</html>
