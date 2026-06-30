@@ -1,19 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon"
-    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23FF8C00'/%3E%3C%2Fsvg%3E">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Antigravity Account Manager</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23FF8C00'/%3E%3C%2Fsvg%3E">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
   <!-- ① Global base styles -->
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css"/>
 
   <style>
+    /* ════════════════════════════════════════
+       TAB NAV
+    ════════════════════════════════════════ */
+    .tab-nav {
+      display: flex;
+      gap: 4px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 4px;
+      margin-bottom: 28px;
+      width: fit-content;
+    }
+    .tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 18px;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      color: var(--text-dim);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      white-space: nowrap;
+    }
+    .tab-btn i { font-size: 15px; }
+    .tab-btn:hover { color: var(--text); background: rgba(255,255,255,.05); }
+    .tab-btn.active {
+      background: var(--surface2);
+      color: #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,.3);
+    }
+    .tab-btn.active i { color: var(--orange); }
+
+    /* Tab panels */
+    .tab-panel          { display: none; }
+    .tab-panel.active   { display: block; }
     /* ════════════════════════════════════════
        HEADER  (header.html)
     ════════════════════════════════════════ */
@@ -24,23 +63,9 @@
       margin-bottom: 36px;
       gap: 16px;
     }
-
-    .header-title {
-      font-size: 17px;
-      font-weight: 600;
-      color: #fff;
-      letter-spacing: -.2px;
-    }
-
-    .header-title span {
-      color: var(--orange);
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 8px;
-      flex-shrink: 0;
-    }
+    .header-title              { font-size:17px; font-weight:600; color:#fff; letter-spacing:-.2px; }
+    .header-title span         { color: var(--orange); }
+    .header-actions            { display:flex; gap:8px; flex-shrink:0; }
 
     /* ════════════════════════════════════════
        ADD PANEL  (add-panel.html)
@@ -53,789 +78,848 @@
       padding: 20px;
       margin-bottom: 24px;
     }
-
-    .add-panel.visible {
-      display: block;
-    }
+    .add-panel.visible { display: block; }
 
     .panel-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: #555;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 14px;
+      font-size:11px; font-weight:600; color:#555;
+      text-transform:uppercase; letter-spacing:1px; margin-bottom:14px;
     }
-
-    .form-row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: flex-end;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .form-group label {
-      font-size: 11px;
-      color: #555;
-      letter-spacing: .4px;
-    }
-
-    .input-status-wrap {
-      width: 140px;
-    }
-
-    .input-date-wrap {
-      width: 190px;
-    }
-
-    .input-time-wrap {
-      width: 160px;
-    }
-
-    .date-time-group {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .date-time-group.hidden {
-      display: none;
-    }
+    .form-row              { display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; }
+    .form-group            { display:flex; flex-direction:column; gap:6px; }
+    .form-group label      { font-size:11px; color:#555; letter-spacing:.4px; }
+    .input-status-wrap     { width:140px; }
+    .input-date-wrap       { width:190px; }
+    .input-time-wrap       { width:160px; }
+    .date-time-group       { display:flex; gap:10px; flex-wrap:wrap; }
+    .date-time-group.hidden{ display:none; }
 
     /* Status dropdown */
-    .status-dropdown {
-      width: 150px;
-      padding: 5px;
-    }
-
+    .status-dropdown { width:150px; padding:5px; }
     .status-option {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 500;
-      transition: background .12s;
+      display:flex; align-items:center; gap:10px;
+      padding:10px 12px; border-radius:10px;
+      cursor:pointer; font-size:13px; font-weight:500;
+      transition:background .12s;
     }
-
-    .status-option+.status-option {
-      margin-top: 2px;
-    }
-
-    .status-option:hover {
-      background: rgba(255, 255, 255, .07);
-    }
-
-    .status-option:active {
-      background: rgba(255, 255, 255, .12);
-    }
-
-    .status-option.selected {
-      background: rgba(255, 255, 255, .06);
-    }
+    .status-option + .status-option { margin-top:2px; }
+    .status-option:hover    { background:rgba(255,255,255,.07); }
+    .status-option:active   { background:rgba(255,255,255,.12); }
+    .status-option.selected { background:rgba(255,255,255,.06); }
 
     /* Calendar */
-    .cal-dropdown {
-      width: 310px;
-      padding: 20px;
-    }
-
-    .cal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
-
-    .cal-month-label {
-      font-size: 15px;
-      font-weight: 600;
-      color: #fff;
-    }
-
-    .cal-nav {
-      display: flex;
-      gap: 6px;
-    }
-
+    .cal-dropdown    { width:310px; padding:20px; }
+    .cal-header      { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+    .cal-month-label { font-size:15px; font-weight:600; color:#fff; }
+    .cal-nav         { display:flex; gap:6px; }
     .cal-nav-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, .08);
-      background: transparent;
-      color: var(--text-dim);
-      cursor: pointer;
-      font-size: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background .15s, color .15s;
+      width:32px; height:32px; border-radius:10px;
+      border:1px solid rgba(255,255,255,.08); background:transparent;
+      color:var(--text-dim); cursor:pointer; font-size:15px;
+      display:flex; align-items:center; justify-content:center;
+      transition:background .15s,color .15s;
     }
-
-    .cal-nav-btn:hover {
-      background: rgba(255, 255, 255, .06);
-      color: #fff;
+    .cal-nav-btn:hover { background:rgba(255,255,255,.06); color:#fff; }
+    .cal-grid  { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; text-align:center; }
+    .cal-dow   { font-size:10px; font-weight:600; color:var(--text-off); text-transform:uppercase; padding:6px 0 10px; letter-spacing:.5px; }
+    .cal-day   {
+      padding:0; border-radius:50%; font-size:14px; cursor:pointer; color:var(--text);
+      transition:background .15s,color .15s; width:34px; height:34px;
+      display:flex; align-items:center; justify-content:center; margin:0 auto;
     }
-
-    .cal-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 4px;
-      text-align: center;
-    }
-
-    .cal-dow {
-      font-size: 10px;
-      font-weight: 600;
-      color: var(--text-off);
-      text-transform: uppercase;
-      padding: 6px 0 10px;
-      letter-spacing: .5px;
-    }
-
-    .cal-day {
-      padding: 0;
-      border-radius: 50%;
-      font-size: 14px;
-      cursor: pointer;
-      color: var(--text);
-      transition: background .15s, color .15s;
-      width: 34px;
-      height: 34px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto;
-    }
-
-    .cal-day:hover {
-      background: rgba(255, 255, 255, .08);
-    }
-
-    .cal-day.other-month {
-      color: var(--text-dead);
-    }
-
-    .cal-day.today {
-      color: var(--orange);
-      font-weight: 700;
-    }
-
-    .cal-day.selected {
-      background: var(--orange);
-      color: #1e1e1e;
-      font-weight: 700;
-    }
-
-    .cal-footer {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 16px;
-      padding-top: 14px;
-      border-top: 1px solid var(--border);
-    }
-
-    .cal-link {
-      font-size: 13px;
-      color: var(--text-dim);
-      cursor: pointer;
-      font-weight: 500;
-      transition: color .15s;
-    }
-
-    .cal-link:hover {
-      color: var(--orange);
-    }
+    .cal-day:hover       { background:rgba(255,255,255,.08); }
+    .cal-day.other-month { color:var(--text-dead); }
+    .cal-day.today       { color:var(--orange); font-weight:700; }
+    .cal-day.selected    { background:var(--orange); color:#1e1e1e; font-weight:700; }
+    .cal-footer  { display:flex; justify-content:space-between; margin-top:16px; padding-top:14px; border-top:1px solid var(--border); }
+    .cal-link    { font-size:13px; color:var(--text-dim); cursor:pointer; font-weight:500; transition:color .15s; }
+    .cal-link:hover { color:var(--orange); }
 
     /* ── Time picker ──
        The glass dropdown clips to border-radius:16px via .dropdown overflow:hidden.
        All padding lives inside .time-picker-inner so corners stay crisp.
     ── */
-    .time-dropdown {
-      width: 252px;
-      padding: 0;
-      border-radius: 16px;
-      overflow: hidden;
-    }
-
-    .time-picker-inner {
-      padding: 14px 14px 16px;
-    }
+    .time-dropdown { width:252px; padding:0; border-radius:16px; overflow:hidden; }
+    .time-picker-inner { padding:14px 14px 16px; }
 
     .time-cols {
-      display: flex;
-      height: 216px;
-      position: relative;
+      display:flex; height:216px; position:relative;
     }
-
     /* Top & bottom fade — matches the dropdown background exactly */
     .time-cols::before,
     .time-cols::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      height: 72px;
-      pointer-events: none;
-      z-index: 3;
+      content:''; position:absolute; left:0; right:0;
+      height:72px; pointer-events:none; z-index:3;
     }
-
-    .time-cols::before {
-      top: 0;
-      background: linear-gradient(to bottom, rgba(30, 30, 32, .97) 0%, transparent 100%);
-    }
-
-    .time-cols::after {
-      bottom: 0;
-      background: linear-gradient(to top, rgba(30, 30, 32, .97) 0%, transparent 100%);
-    }
+    .time-cols::before { top:0;    background:linear-gradient(to bottom,rgba(30,30,32,.97) 0%,transparent 100%); }
+    .time-cols::after  { bottom:0; background:linear-gradient(to top,  rgba(30,30,32,.97) 0%,transparent 100%); }
 
     /* Selection highlight bar */
     .center-bar {
-      position: absolute;
-      top: 50%;
-      left: 8px;
-      right: 8px;
-      height: 42px;
-      background: rgba(255, 255, 255, .07);
-      border: 1px solid rgba(255, 255, 255, .09);
-      border-radius: 10px;
-      transform: translateY(-50%);
-      pointer-events: none;
-      z-index: 1;
+      position:absolute; top:50%; left:8px; right:8px; height:42px;
+      background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.09);
+      border-radius:10px;
+      transform:translateY(-50%);
+      pointer-events:none; z-index:1;
     }
 
     .time-col {
-      flex: 1;
-      overflow-y: auto;
-      scroll-snap-type: y mandatory;
-      scrollbar-width: none;
-      position: relative;
+      flex:1; overflow-y:auto; scroll-snap-type:y mandatory;
+      scrollbar-width:none; position:relative;
       /* (column-height − item-height) / 2 = (216−42)/2 = 87px */
-      padding: 87px 0;
-      z-index: 2;
+      padding:87px 0;
+      z-index:2;
     }
-
-    .time-col::-webkit-scrollbar {
-      display: none;
-    }
+    .time-col::-webkit-scrollbar { display:none; }
 
     .time-divider {
-      width: 1px;
-      background: rgba(255, 255, 255, .06);
-      flex-shrink: 0;
-      margin: 72px 0;
-      z-index: 2;
+      width:1px; background:rgba(255,255,255,.06);
+      flex-shrink:0; margin:72px 0; z-index:2;
     }
 
     .time-item {
-      text-align: center;
-      font-size: 15px;
-      cursor: pointer;
-      color: var(--text-dim);
-      transition: color .12s;
-      scroll-snap-align: center;
-      height: 42px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 6px;
-      border-radius: 8px;
+      text-align:center; font-size:15px; cursor:pointer;
+      color:var(--text-dim); transition:color .12s;
+      scroll-snap-align:center;
+      height:42px; display:flex; align-items:center; justify-content:center;
+      margin:0 6px; border-radius:8px;
     }
-
-    .time-item:hover {
-      color: var(--text);
-    }
-
-    .time-item.selected {
-      color: #fff;
-      font-size: 16px;
-      font-weight: 600;
-    }
+    .time-item:hover    { color:var(--text); }
+    .time-item.selected { color:#fff; font-size:16px; font-weight:600; }
 
     /* ════════════════════════════════════════
        TABLE  (table.html)
     ════════════════════════════════════════ */
-    .table-card {
-      background: var(--surface);
-      border: 1px solid rgba(255, 255, 255, .04);
-      border-radius: 18px;
-      overflow: visible;
-    }
-
-    .table-scroll {
-      overflow: visible;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 520px;
-    }
+    .table-card   { background:var(--surface); border:1px solid rgba(255,255,255,.04); border-radius:18px; overflow:visible; }
+    .table-scroll { overflow:visible; }
+    table         { width:100%; border-collapse:collapse; min-width:520px; }
 
     thead th {
-      padding: 14px 18px;
-      text-align: center;
-      font-size: 10px;
-      font-weight: 600;
-      color: var(--text-off);
-      text-transform: uppercase;
-      letter-spacing: .8px;
-      border-bottom: 1px solid rgba(255, 255, 255, .06);
-      vertical-align: middle;
-      white-space: nowrap;
+      padding:14px 18px; text-align:center;
+      font-size:10px; font-weight:600; color:var(--text-off);
+      text-transform:uppercase; letter-spacing:.8px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      vertical-align:middle; white-space:nowrap;
     }
+    thead th:first-child { text-align: left; }
+    tbody tr           { border-bottom:1px solid rgba(255,255,255,.04); transition:background .1s; }
+    tbody tr:last-child{ border-bottom:none; }
+    tbody tr:hover     { background:rgba(255,255,255,.03); }
+    tbody td           { padding:14px 18px; font-size:13px; color:#ccc; vertical-align:middle; text-align:center; }
+    tbody td:first-child { text-align: left; }
+    .email-cell        { color:#f2f2f7; word-break:break-all; }
 
-    thead th:first-child {
-      text-align: left;
-    }
-
-    tbody tr {
-      border-bottom: 1px solid rgba(255, 255, 255, .04);
-      transition: background .1s;
-    }
-
-    tbody tr:last-child {
-      border-bottom: none;
-    }
-
-    tbody tr:hover {
-      background: rgba(255, 255, 255, .03);
-    }
-
-    tbody td {
-      padding: 14px 18px;
-      font-size: 13px;
-      color: #ccc;
-      vertical-align: middle;
-      text-align: center;
-    }
-
-    tbody td:first-child {
-      text-align: left;
-    }
-
-    .email-cell {
-      color: #f2f2f7;
-      word-break: break-all;
-    }
-
-    .tbl-status-wrap {
-      position: relative;
-      display: inline-block;
-    }
-
+    .tbl-status-wrap   { position:relative; display:inline-block; }
     .tbl-status-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 6px 24px 6px 12px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      user-select: none;
-      background-color: var(--surface2);
-      background-repeat: no-repeat;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M1 1l3 3 3-3' stroke='%23666' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-position: right 8px center;
-      border: 1px solid rgba(255, 255, 255, .05);
-      transition: opacity .15s;
+      display:inline-flex; align-items:center; gap:7px;
+      padding:6px 24px 6px 12px; border-radius:12px;
+      font-size:12px; font-weight:600; cursor:pointer; user-select:none;
+      background-color:var(--surface2);
+      background-repeat:no-repeat;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M1 1l3 3 3-3' stroke='%23666' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-position:right 8px center;
+      border:1px solid rgba(255,255,255,.05);
+      transition:opacity .15s;
     }
-
-    .tbl-status-btn:hover {
-      opacity: .85;
-      background-color: var(--surface3);
-    }
-
-    .tbl-status-btn.open-pill {
-      color: var(--green);
-    }
-
-    .tbl-status-btn.closed-pill {
-      color: var(--orange);
-    }
-
-    .tbl-status-dropdown {
-      width: 150px;
-      padding: 5px;
-    }
+    .tbl-status-btn:hover       { opacity:.85; background-color:var(--surface3); }
+    .tbl-status-btn.open-pill   { color:var(--green); }
+    .tbl-status-btn.closed-pill { color:var(--orange); }
+    .tbl-status-dropdown { width:150px; padding:5px; }
 
     .inline-dt {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      padding: 6px 12px;
-      border-radius: 12px;
-      border: 1px solid transparent;
-      font-size: 12px;
-      color: var(--text-dim);
-      transition: border-color .15s, background .15s, color .15s;
-      background-color: rgba(255, 255, 255, .03);
+      display:inline-flex; align-items:center; gap:8px; cursor:pointer;
+      padding:6px 12px; border-radius:12px; border:1px solid transparent;
+      font-size:12px; color:var(--text-dim);
+      transition:border-color .15s,background .15s,color .15s;
+      background-color:rgba(255,255,255,.03);
     }
+    .inline-dt:hover { border-color:rgba(255,255,255,.08); background:rgba(255,255,255,.06); color:var(--text); }
+    .inline-dt .idt-icon    { color:var(--text-dim); font-size:14px; display:flex; align-items:center; }
+    .inline-dt .idt-icon i  { width:15px; height:15px; }
+    .tbl-dt-dropdown   { min-width:310px; }
+    .tbl-time-dropdown { min-width:252px; }
 
-    .inline-dt:hover {
-      border-color: rgba(255, 255, 255, .08);
-      background: rgba(255, 255, 255, .06);
-      color: var(--text);
-    }
-
-    .inline-dt .idt-icon {
-      color: var(--text-dim);
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-    }
-
-    .inline-dt .idt-icon i {
-      width: 15px;
-      height: 15px;
-    }
-
-    .tbl-dt-dropdown {
-      min-width: 310px;
-    }
-
-    .tbl-time-dropdown {
-      min-width: 252px;
-    }
-
-    .dash {
-      color: var(--text-dead);
-    }
-
+    .dash       { color:var(--text-dead); }
     .btn-delete {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 5px;
-      background: rgba(255, 77, 77, .08);
-      border: 1px solid rgba(255, 77, 77, .15);
+      background: rgba(255,77,77,.08);
+      border: 1px solid rgba(255,77,77,.15);
       border-radius: 8px;
-      font-family: inherit;
-      font-size: 11px;
-      font-weight: 600;
-      color: #ff6b6b;
-      cursor: pointer;
-      padding: 5px 10px;
-      letter-spacing: .2px;
+      font-family: inherit; font-size: 11px; font-weight: 600;
+      color: #ff6b6b; cursor: pointer; padding: 5px 10px; letter-spacing: .2px;
       transition: background .15s, border-color .15s, color .15s;
     }
+    .btn-delete:hover  { background:rgba(255,77,77,.18); border-color:rgba(255,77,77,.4); color:var(--red); }
+    .btn-delete:active { background:rgba(255,77,77,.28); }
+    .btn-delete i      { font-size:13px; color:inherit; }
 
-    .btn-delete:hover {
-      background: rgba(255, 77, 77, .18);
-      border-color: rgba(255, 77, 77, .4);
-      color: var(--red);
-    }
-
-    .btn-delete:active {
-      background: rgba(255, 77, 77, .28);
-    }
-
-    .btn-delete i {
-      font-size: 13px;
-      color: inherit;
-    }
-
-    .empty-state {
-      padding: 56px 20px;
-      text-align: center;
-    }
-
-    .empty-state p {
-      font-size: 13px;
-      color: var(--text-dead);
-      margin-bottom: 4px;
-    }
-
-    .empty-state p:first-child {
-      font-size: 14px;
-      color: var(--text-off);
-    }
+    .empty-state { padding:56px 20px; text-align:center; }
+    .empty-state p              { font-size:13px; color:var(--text-dead); margin-bottom:4px; }
+    .empty-state p:first-child  { font-size:14px; color:var(--text-off); }
 
     /* ════════════════════════════════════════
        CONFIRM DIALOG  (confirm-dialog.html)
     ════════════════════════════════════════ */
-    .confirm-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, .75);
-      z-index: 400;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .confirm-overlay.visible {
-      display: flex;
-    }
-
-    .confirm-card {
-      background: var(--surface);
-      border: 1px solid rgba(255, 255, 255, .08);
-      border-radius: 20px;
-      padding: 28px 28px 24px;
-      width: 100%;
-      max-width: 320px;
-      margin: 20px;
-      text-align: center;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, .45);
-    }
-
-    .confirm-card .ct {
-      font-size: 16px;
-      font-weight: 600;
-      color: #fff;
-      margin-bottom: 8px;
-    }
-
-    .confirm-card .ce {
-      font-size: 12px;
-      color: var(--orange);
-      margin-bottom: 6px;
-      word-break: break-all;
-    }
-
-    .confirm-card .cm {
-      font-size: 13px;
-      color: var(--text-dim);
-    }
-
-    .confirm-actions {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin-top: 20px;
-    }
-
-    .confirm-actions .btn {
-      height: 40px;
-      padding: 0 20px;
-      min-width: 90px;
-      border-radius: 10px;
-    }
+    .confirm-overlay          { display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:400; align-items:center; justify-content:center; }
+    .confirm-overlay.visible  { display:flex; }
+    .confirm-card             { background:var(--surface); border:1px solid rgba(255,255,255,.08); border-radius:20px; padding:28px 28px 24px; width:100%; max-width:320px; margin:20px; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,.45); }
+    .confirm-card .ct         { font-size:16px; font-weight:600; color:#fff; margin-bottom:8px; }
+    .confirm-card .ce         { font-size:12px; color:var(--orange); margin-bottom:6px; word-break:break-all; }
+    .confirm-card .cm         { font-size:13px; color:var(--text-dim); }
+    .confirm-actions          { display:flex; gap:10px; justify-content:center; margin-top:20px; }
+    .confirm-actions .btn     { height:40px; padding:0 20px; min-width:90px; border-radius:10px; }
 
     /* ════════════════════════════════════════
        RESPONSIVE
     ════════════════════════════════════════ */
     @media (max-width:768px) {
-      .header {
-        margin-bottom: 24px;
-      }
-
-      .header-title {
-        font-size: 15px;
-      }
-
-      .form-row {
-        flex-direction: column;
-      }
-
-      .form-group,
-      .real-email,
-      .input-status-wrap,
-      .input-date-wrap,
-      .input-time-wrap {
-        width: 100% !important;
-      }
-
-      .date-time-group {
-        flex-direction: column;
-        gap: 14px;
-        width: 100%;
-      }
-
-      .fake-input {
-        width: 100%;
-        border-radius: 14px;
-      }
-
-      .add-panel {
-        padding: 16px;
-        border-radius: 16px;
-      }
-
-      thead th {
-        font-size: 9px;
-        padding: 10px 12px;
-      }
-
-      tbody td {
-        padding: 11px 12px;
-      }
-
-      .cal-dropdown {
-        width: 280px;
-      }
-
-      .time-dropdown {
-        width: 220px;
-      }
+      .header         { margin-bottom:24px; }
+      .header-title   { font-size:15px; }
+      .form-row       { flex-direction:column; }
+      .form-group, .real-email,
+      .input-status-wrap, .input-date-wrap,
+      .input-time-wrap { width:100% !important; }
+      .date-time-group { flex-direction:column; gap:14px; width:100%; }
+      .fake-input      { width:100%; border-radius:14px; }
+      .add-panel       { padding:16px; border-radius:16px; }
+      thead th         { font-size:9px; padding:10px 12px; }
+      tbody td         { padding:11px 12px; }
+      .cal-dropdown    { width:280px; }
+      .time-dropdown   { width:220px; }
     }
-
     @media (max-width:600px) {
-      .cal-dropdown {
-        width: 280px;
-        padding: 16px;
-      }
-
-      .time-dropdown {
-        width: 220px;
-      }
-
-      .confirm-card {
-        border-radius: 18px;
-        padding: 24px 22px 20px;
-      }
+      .cal-dropdown  { width:280px; padding:16px; }
+      .time-dropdown { width:220px; }
+      .confirm-card  { border-radius:18px; padding:24px 22px 20px; }
     }
+
+    /* ════════════════════════════════════════
+       PROMPTS PAGE
+    ════════════════════════════════════════ */
+    .prompts-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      gap: 16px;
+    }
+    .prompts-title { font-size:17px; font-weight:600; color:#fff; letter-spacing:-.2px; }
+    .prompts-title span { color: var(--orange); }
+
+    /* Add prompt panel */
+    .prompt-add-panel {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+    .prompt-add-panel.visible { display: block; }
+    .prompt-add-label {
+      font-size:11px; font-weight:600; color:#555;
+      text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;
+    }
+    .prompt-add-row { display:flex; flex-direction:column; gap:10px; }
+
+    .prompt-title-input,
+    .prompt-text-input {
+      background: var(--surface2);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 13px;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+      resize: none;
+    }
+    .prompt-title-input { width: 100%; height: 42px; }
+    .prompt-text-input  { width: 100%; min-height: 100px; line-height: 1.6; overflow: hidden; }
+    .prompt-title-input:focus,
+    .prompt-text-input:focus  { border-color: var(--orange); box-shadow: 0 0 0 3px var(--orange-glow); }
+    .prompt-title-input::placeholder,
+    .prompt-text-input::placeholder { color: var(--text-dead); }
+
+    .prompt-add-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:4px; }
+
+    /* Prompt list */
+    .prompt-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .prompt-card {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,.05);
+      border-radius: 16px;
+      padding: 16px 16px 14px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      transition: border-color .15s, box-shadow .15s;
+      cursor: default;
+    }
+    .prompt-card:hover { border-color: rgba(255,255,255,.09); }
+    .prompt-card.dragging {
+      opacity: .45;
+      border-color: var(--orange);
+    }
+    .prompt-card.drag-over {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 2px var(--orange-glow);
+    }
+
+    /* Drag handle */
+    .drag-handle {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 4px 2px;
+      cursor: grab;
+      flex-shrink: 0;
+      margin-top: 2px;
+      opacity: .3;
+      transition: opacity .15s;
+    }
+    .drag-handle:active { cursor: grabbing; }
+    .prompt-card:hover .drag-handle { opacity: .6; }
+    .drag-handle span {
+      display: block;
+      width: 14px;
+      height: 2px;
+      background: var(--text-dim);
+      border-radius: 2px;
+    }
+
+    /* Prompt content */
+    .prompt-body { flex: 1; min-width: 0; }
+    .prompt-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .prompt-name:empty { display: none; }
+    .prompt-text {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* Inline edit mode */
+    .prompt-edit-title,
+    .prompt-edit-text {
+      background: var(--surface2);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 13px;
+      padding: 8px 12px;
+      outline: none;
+      resize: none;
+      width: 100%;
+      transition: border-color .15s, box-shadow .15s;
+      margin-bottom: 8px;
+    }
+    .prompt-edit-title { height: 38px; margin-bottom: 6px; }
+    .prompt-edit-text  { min-height: 80px; line-height: 1.6; overflow: hidden; }
+    .prompt-edit-title:focus,
+    .prompt-edit-text:focus { border-color: var(--orange); box-shadow: 0 0 0 2px var(--orange-glow); }
+    .prompt-edit-actions { display:flex; gap:6px; }
+
+    /* Action buttons */
+    .prompt-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .pact-btn {
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 9px;
+      border: 1px solid rgba(255,255,255,.06);
+      background: var(--surface2);
+      cursor: pointer;
+      transition: background .15s, border-color .15s;
+      flex-shrink: 0;
+    }
+    .pact-btn i { font-size: 15px; color: var(--text-dim); transition: color .15s; }
+    .pact-btn:hover { background: var(--surface3); border-color: rgba(255,255,255,.12); }
+    .pact-btn.copy-btn:hover i  { color: var(--orange); }
+    .pact-btn.edit-btn:hover i  { color: #60a5fa; }
+    .pact-btn.del-btn:hover i   { color: var(--red); }
+    .pact-btn.save-btn:hover i  { color: var(--green); }
+
+    /* copied flash */
+    .pact-btn.copied { background: rgba(76,175,80,.15); border-color: rgba(76,175,80,.3); }
+    .pact-btn.copied i { color: var(--green); }
+
+    /* Empty prompts */
+    .prompts-empty { padding:56px 20px; text-align:center; }
+    .prompts-empty p              { font-size:13px; color:var(--text-dead); margin-bottom:4px; }
+    .prompts-empty p:first-child  { font-size:14px; color:var(--text-off); }
+
+    /* small save/cancel btns inside edit */
+    .btn-sm {
+      height: 30px; padding: 0 12px; border-radius: 8px;
+      font-family: inherit; font-size: 12px; font-weight: 500;
+      cursor: pointer; border: none;
+    }
+    .btn-sm-primary { background: var(--orange); color: #0e0e0e; }
+    .btn-sm-ghost   { background: transparent; color: #666; border: 1px solid var(--border); }
+    .btn-sm-ghost:hover { color: var(--text); }
+
+    @media (max-width:768px) {
+      .prompts-header { margin-bottom:16px; }
+      .prompt-card    { padding:14px 12px 12px; }
+    }
+
+    /* ════════════════════════════════════════
+       SEARCH BOX
+    ════════════════════════════════════════ */
+    .search-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      font-size: 14px;
+      color: var(--text-dead);
+      pointer-events: none;
+    }
+    .search-input {
+      height: 36px;
+      width: 200px;
+      background: var(--surface2);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 12.5px;
+      padding: 0 12px 0 32px;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s, width .2s;
+    }
+    .search-input:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px var(--orange-glow);
+      width: 230px;
+    }
+    .search-input::placeholder { color: var(--text-dead); }
+
+    @media (max-width:768px) {
+      .header-actions { flex-wrap: wrap; justify-content: flex-end; }
+      .search-wrap, .search-input { width: 100%; }
+      .search-input:focus { width: 100%; }
+    }
+
+    /* ════════════════════════════════════════
+       TASKS TAB
+    ════════════════════════════════════════ */
+    .task-meta-row { display:flex; gap:10px; flex-wrap:wrap; }
+
+    /* Priority dots — orange-shade family per brand request */
+    .priority-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+    .prio-high { background: #FF8C00; }                 /* full brand orange   */
+    .prio-med  { background: #FFB347; }                 /* mid orange          */
+    .prio-low  { background: #8a6238; }                 /* muted/dim orange    */
+    .priority-high-text { color:#FF8C00; }
+    .priority-med-text  { color:#FFB347; }
+    .priority-low-text  { color:#c79a6b; }
+
+    /* Filter pills */
+    .task-filters { display:flex; gap:8px; margin-bottom:16px; }
+    .task-filter-btn {
+      padding:7px 16px; border-radius:10px; border:1px solid var(--border);
+      background:transparent; color:var(--text-dim); font-family:inherit;
+      font-size:12.5px; font-weight:500; cursor:pointer; transition:background .15s,color .15s,border-color .15s;
+    }
+    .task-filter-btn:hover  { color:var(--text); }
+    .task-filter-btn.active { background:var(--surface2); color:#fff; border-color:rgba(255,255,255,.1); }
+
+    /* Task list */
+    .task-list { display:flex; flex-direction:column; gap:10px; }
+
+    .task-card {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,.05);
+      border-radius: 16px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: border-color .15s;
+    }
+    .task-card:hover { border-color: rgba(255,255,255,.09); }
+    .task-card.done  { opacity: .5; }
+    .task-card.done .task-name { text-decoration: line-through; color: var(--text-dim); }
+
+    /* Custom checkbox */
+    .task-check {
+      width: 21px; height: 21px;
+      border-radius: 7px;
+      border: 1.5px solid rgba(255,255,255,.18);
+      flex-shrink: 0;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s, border-color .15s;
+    }
+    .task-check:hover { border-color: var(--orange); }
+    .task-check.checked { background: var(--orange); border-color: var(--orange); }
+    .task-check.checked i { color: #1a1a1a; font-size: 13px; }
+
+    .task-body { flex:1; min-width:0; display:flex; flex-direction:column; gap:4px; }
+    .task-name { font-size:13.5px; color:#fff; font-weight:500; word-break:break-word; }
+    .task-meta { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+
+    .task-priority-pill {
+      display:inline-flex; align-items:center; gap:5px;
+      font-size:10.5px; font-weight:600; padding:2px 9px 2px 7px;
+      border-radius:7px; background:rgba(255,255,255,.04);
+    }
+    .task-due {
+      display:inline-flex; align-items:center; gap:5px;
+      font-size:11px; color:var(--text-dim);
+    }
+    .task-due i { font-size:12px; }
+    .task-due.overdue { color: #ff6b6b; }
+
+    .task-delete {
+      width:30px; height:30px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      border-radius:8px; border:1px solid transparent; background:transparent;
+      color:var(--text-dead); cursor:pointer; transition:color .15s,background .15s;
+    }
+    .task-delete:hover { color:var(--red); background:rgba(255,77,77,.08); }
+    .task-delete i { font-size:15px; }
+
+    .task-edit {
+      width:30px; height:30px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      border-radius:8px; border:1px solid transparent; background:transparent;
+      color:var(--text-dead); cursor:pointer; transition:color .15s,background .15s;
+    }
+    .task-edit:hover { color:#60a5fa; background:rgba(96,165,250,.08); }
+    .task-edit i { font-size:15px; }
+
+    /* Inline task edit fields */
+    .task-edit-meta-row { display:flex; gap:10px; margin: 4px 0 8px; align-items:flex-start; }
+    .task-edit-select {
+      background: var(--surface2);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 9px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 12.5px;
+      padding: 7px 10px;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+      height: 38px;
+    }
+    .task-edit-select:focus { border-color: var(--orange); box-shadow: 0 0 0 2px var(--orange-glow); }
+
+    @media (max-width:768px) {
+      .task-meta-row { flex-direction:column; }
+      .task-meta-row .input-status-wrap,
+      .task-meta-row .input-date-wrap { width:100% !important; }
+      .task-card { padding:12px; gap:10px; }
+      .task-edit-meta-row { flex-direction:column; }
+      .task-edit-meta-row .input-date-wrap { width:100% !important; }
+    }
+
   </style>
 </head>
 
 <body>
   <div class="page">
 
-    <!-- ② Header (header.html) -->
-    <header class="header">
-      <h1 class="header-title">Antigravity <span>Account Manager</span></h1>
-      <div class="header-actions">
-        <button class="btn btn-ghost" id="btnClearAll">Clear All</button>
-        <button class="btn btn-primary" id="btnAddAccount">+ Add</button>
-      </div>
-    </header>
+    <!-- ══ TAB NAV ══ -->
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="accounts">
+        <i class="ph ph-users"></i> Antigravity
+      </button>
+      <button class="tab-btn" data-tab="prompts">
+        <i class="ph ph-sparkle"></i> My Prompts
+      </button>
+      <button class="tab-btn" data-tab="tasks">
+        <i class="ph ph-check-square"></i> Tasks
+      </button>
+    </nav>
 
-    <!-- ③ Add Panel (add-panel.html) -->
-    <section class="add-panel" id="addPanel">
-      <p class="panel-label">New Account</p>
-      <div class="form-row" id="formRow">
+    <!-- ══ TAB: ACCOUNTS ══ -->
+    <div class="tab-panel active" id="tab-accounts">
 
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" class="real-email" id="inputEmail" placeholder="you@gmail.com" autocomplete="off" />
-        </div>
-
-        <div class="form-group">
-          <label>Status</label>
-          <div class="input-status-wrap" style="position:relative;">
-            <div class="fake-input" id="statusTrigger">
-              <span class="status-dot dot-open" id="statusDot"></span>
-              <span class="fi-val" id="statusLabel">Open</span>
-              <span style="color:var(--text-dead);font-size:10px;flex-shrink:0;margin-left:2px;">&#9662;</span>
-            </div>
-            <div class="dropdown status-dropdown" id="statusDropdown">
-              <div class="status-option selected" data-val="Open">
-                <span class="status-dot dot-open"></span>
-                <span class="status-open-text">Open</span>
-              </div>
-              <div class="status-option" data-val="Closed">
-                <span class="status-dot dot-closed"></span>
-                <span class="status-closed-text">Closed</span>
-              </div>
-            </div>
+      <!-- Header -->
+      <header class="header">
+        <h1 class="header-title">Antigravity <span>Account Manager</span></h1>
+        <div class="header-actions">
+          <div class="search-wrap">
+            <i class="ph ph-magnifying-glass search-icon"></i>
+            <input type="text" class="search-input" id="accountSearch" placeholder="Search email or status…" autocomplete="off"/>
           </div>
+          <button class="btn btn-ghost" id="btnClearAll">Clear All</button>
+          <button class="btn btn-primary" id="btnAddAccount">+ Add</button>
         </div>
+      </header>
 
-        <div class="date-time-group hidden" id="dateTimeGroup">
+      <!-- Add Panel -->
+      <section class="add-panel" id="addPanel">
+        <p class="panel-label">New Account</p>
+        <div class="form-row" id="formRow">
 
           <div class="form-group">
-            <label>Open Date</label>
-            <div class="input-date-wrap" style="position:relative;">
-              <div class="fake-input" id="dateTrigger">
-                <i class="ph ph-calendar-blank"></i>
-                <span class="fi-val fi-placeholder" id="dateLabel">Pick a date</span>
-              </div>
-              <div class="dropdown cal-dropdown" id="calDropdown">
-                <div class="cal-header">
-                  <span class="cal-month-label" id="calMonthLabel"></span>
-                  <div class="cal-nav">
-                    <button class="cal-nav-btn" id="calPrev">&#8249;</button>
-                    <button class="cal-nav-btn" id="calNext">&#8250;</button>
-                  </div>
-                </div>
-                <div class="cal-grid" id="calGrid"></div>
-                <div class="cal-footer">
-                  <span class="cal-link" id="calClear">Clear</span>
-                  <span class="cal-link" id="calToday">Today</span>
-                </div>
-              </div>
-            </div>
+            <label>Email</label>
+            <input type="email" class="real-email" id="inputEmail" placeholder="you@gmail.com" autocomplete="off"/>
           </div>
 
           <div class="form-group">
-            <label>Open Time</label>
-            <div class="input-time-wrap" style="position:relative;">
-              <div class="fake-input" id="timeTrigger">
-                <i class="ph ph-clock"></i>
-                <span class="fi-val fi-placeholder" id="timeLabel">Pick a time</span>
+            <label>Status</label>
+            <div class="input-status-wrap" style="position:relative;">
+              <div class="fake-input" id="statusTrigger">
+                <span class="status-dot dot-open" id="statusDot"></span>
+                <span class="fi-val" id="statusLabel">Open</span>
+                <span style="color:var(--text-dead);font-size:10px;flex-shrink:0;margin-left:2px;">&#9662;</span>
               </div>
-              <div class="dropdown time-dropdown" id="timeDropdown">
-                <div class="time-picker-inner">
-                  <div class="time-cols">
-                    <div class="center-bar"></div>
-                    <div class="time-col" id="hourCol"></div>
-                    <div class="time-divider"></div>
-                    <div class="time-col" id="minCol"></div>
-                    <div class="time-divider"></div>
-                    <div class="time-col" id="periodCol"></div>
+              <div class="dropdown status-dropdown" id="statusDropdown">
+                <div class="status-option selected" data-val="Open">
+                  <span class="status-dot dot-open"></span>
+                  <span class="status-open-text">Open</span>
+                </div>
+                <div class="status-option" data-val="Closed">
+                  <span class="status-dot dot-closed"></span>
+                  <span class="status-closed-text">Closed</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="date-time-group hidden" id="dateTimeGroup">
+
+            <div class="form-group">
+              <label>Open Date</label>
+              <div class="input-date-wrap" style="position:relative;">
+                <div class="fake-input" id="dateTrigger">
+                  <i class="ph ph-calendar-blank"></i>
+                  <span class="fi-val fi-placeholder" id="dateLabel">Pick a date</span>
+                </div>
+                <div class="dropdown cal-dropdown" id="calDropdown">
+                  <div class="cal-header">
+                    <span class="cal-month-label" id="calMonthLabel"></span>
+                    <div class="cal-nav">
+                      <button class="cal-nav-btn" id="calPrev">&#8249;</button>
+                      <button class="cal-nav-btn" id="calNext">&#8250;</button>
+                    </div>
+                  </div>
+                  <div class="cal-grid" id="calGrid"></div>
+                  <div class="cal-footer">
+                    <span class="cal-link" id="calClear">Clear</span>
+                    <span class="cal-link" id="calToday">Today</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Open Time</label>
+              <div class="input-time-wrap" style="position:relative;">
+                <div class="fake-input" id="timeTrigger">
+                  <i class="ph ph-clock"></i>
+                  <span class="fi-val fi-placeholder" id="timeLabel">Pick a time</span>
+                </div>
+                <div class="dropdown time-dropdown" id="timeDropdown">
+                  <div class="time-picker-inner">
+                    <div class="time-cols">
+                      <div class="center-bar"></div>
+                      <div class="time-col" id="hourCol"></div>
+                      <div class="time-divider"></div>
+                      <div class="time-col" id="minCol"></div>
+                      <div class="time-divider"></div>
+                      <div class="time-col" id="periodCol"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="form-group" style="justify-content:flex-end;">
+            <label style="visibility:hidden;font-size:11px;">&#x200E;</label>
+            <button class="btn btn-primary" id="btnSave"
+              style="height:48px;padding:0 20px;border-radius:14px;">Save</button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Accounts Table -->
+      <div class="table-card">
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Email Address</th>
+                <th>Status</th>
+                <th>Open Date</th>
+                <th>Open Time</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="accountsBody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="emptyState">
+          <p>No accounts</p>
+          <p>Click <span style="color:var(--orange);">+ Add</span> to get started</p>
+        </div>
+        <div class="empty-state" id="noResultsState" style="display:none;">
+          <p>No matches</p>
+          <p>Try a different search term</p>
+        </div>
+      </div>
+
+    </div><!-- /#tab-accounts -->
+
+    <!-- ══ TAB: MY PROMPTS ══ -->
+    <div class="tab-panel" id="tab-prompts">
+
+      <div class="prompts-header">
+        <h1 class="prompts-title">My <span>Prompts</span></h1>
+        <button class="btn btn-primary" id="btnAddPrompt">+ Add Prompt</button>
+      </div>
+
+      <!-- Add Prompt Panel -->
+      <div class="prompt-add-panel" id="promptAddPanel">
+        <p class="prompt-add-label">New Prompt</p>
+        <div class="prompt-add-row">
+          <input  type="text"  class="prompt-title-input" id="promptTitleInput" placeholder="Prompt title (optional)" autocomplete="off"/>
+          <textarea class="prompt-text-input" id="promptTextInput" placeholder="Paste or type your prompt here…" rows="4"></textarea>
+          <div class="prompt-add-actions">
+            <button class="btn btn-ghost"    id="btnPromptCancel">Cancel</button>
+            <button class="btn btn-primary"  id="btnPromptSave">Save Prompt</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prompt List -->
+      <div class="prompt-list" id="promptList"></div>
+      <div class="prompts-empty" id="promptsEmpty" style="display:none;">
+        <p>No prompts yet</p>
+        <p>Click <span style="color:var(--orange);">+ Add Prompt</span> to save your first one</p>
+      </div>
+
+    </div><!-- /#tab-prompts -->
+
+    <!-- ══ TAB: TASKS ══ -->
+    <div class="tab-panel" id="tab-tasks">
+
+      <div class="prompts-header">
+        <h1 class="prompts-title">Daily <span>Tasks</span></h1>
+        <button class="btn btn-primary" id="btnAddTask">+ Add Task</button>
+      </div>
+
+      <!-- Add Task Panel -->
+      <div class="prompt-add-panel" id="taskAddPanel">
+        <p class="prompt-add-label">New Task</p>
+        <div class="prompt-add-row">
+          <input type="text" class="prompt-title-input" id="taskTitleInput" placeholder="What needs to get done?" autocomplete="off"/>
+
+          <div class="task-meta-row">
+            <div class="form-group">
+              <label>Priority</label>
+              <div class="input-status-wrap" style="position:relative;width:130px;">
+                <div class="fake-input" id="taskPriorityTrigger" style="height:42px;">
+                  <span class="priority-dot prio-med" id="taskPriorityDot"></span>
+                  <span class="fi-val" id="taskPriorityLabel">Medium</span>
+                  <span style="color:var(--text-dead);font-size:10px;flex-shrink:0;margin-left:2px;">&#9662;</span>
+                </div>
+                <div class="dropdown status-dropdown" id="taskPriorityDropdown">
+                  <div class="status-option" data-val="High">
+                    <span class="priority-dot prio-high"></span>
+                    <span class="priority-high-text">High</span>
+                  </div>
+                  <div class="status-option selected" data-val="Medium">
+                    <span class="priority-dot prio-med"></span>
+                    <span class="priority-med-text">Medium</span>
+                  </div>
+                  <div class="status-option" data-val="Low">
+                    <span class="priority-dot prio-low"></span>
+                    <span class="priority-low-text">Low</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Due Date</label>
+              <div class="input-date-wrap" style="position:relative;width:180px;">
+                <div class="fake-input" id="taskDateTrigger" style="height:42px;">
+                  <i class="ph ph-calendar-blank"></i>
+                  <span class="fi-val fi-placeholder" id="taskDateLabel">No due date</span>
+                </div>
+                <div class="dropdown cal-dropdown" id="taskCalDropdown">
+                  <div class="cal-header">
+                    <span class="cal-month-label" id="taskCalMonthLabel"></span>
+                    <div class="cal-nav">
+                      <button class="cal-nav-btn" id="taskCalPrev">&#8249;</button>
+                      <button class="cal-nav-btn" id="taskCalNext">&#8250;</button>
+                    </div>
+                  </div>
+                  <div class="cal-grid" id="taskCalGrid"></div>
+                  <div class="cal-footer">
+                    <span class="cal-link" id="taskCalClear">Clear</span>
+                    <span class="cal-link" id="taskCalToday">Today</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
+          <div class="prompt-add-actions">
+            <button class="btn btn-ghost"   id="btnTaskCancel">Cancel</button>
+            <button class="btn btn-primary" id="btnTaskSave">Add Task</button>
+          </div>
         </div>
-
-        <div class="form-group" style="justify-content:flex-end;">
-          <label style="visibility:hidden;font-size:11px;">&#x200E;</label>
-          <button class="btn btn-primary" id="btnSave"
-            style="height:48px;padding:0 20px;border-radius:14px;">Save</button>
-        </div>
-
       </div>
-    </section>
 
-    <!-- ④ Accounts Table (table.html) -->
-    <div class="table-card">
-      <div class="table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th>Email Address</th>
-              <th>Status</th>
-              <th>Open Date</th>
-              <th>Open Time</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="accountsBody"></tbody>
-        </table>
+      <!-- Task filter pills -->
+      <div class="task-filters" id="taskFilters">
+        <button class="task-filter-btn active" data-filter="all">All</button>
+        <button class="task-filter-btn" data-filter="active">Active</button>
+        <button class="task-filter-btn" data-filter="done">Completed</button>
       </div>
-      <div class="empty-state" id="emptyState">
-        <p>No accounts</p>
-        <p>Click <span style="color:var(--orange);">+ Add</span> to get started</p>
+
+      <!-- Task List -->
+      <div class="task-list" id="taskList"></div>
+      <div class="prompts-empty" id="tasksEmpty" style="display:none;">
+        <p>No tasks</p>
+        <p>Click <span style="color:var(--orange);">+ Add Task</span> to plan your day</p>
       </div>
-    </div>
+
+    </div><!-- /#tab-tasks -->
 
   </div><!-- /.page -->
 
-  <!-- ⑤ Confirm Dialog (confirm-dialog.html) -->
+  <!-- Confirm Dialog -->
   <div class="confirm-overlay" id="confirmOverlay">
     <div class="confirm-card">
       <p class="ct" id="confirmTitle"></p>
       <p class="ce" id="confirmEmail"></p>
       <p class="cm" id="confirmMsg"></p>
       <div class="confirm-actions">
-        <button class="btn btn-ghost" id="confirmCancel">Cancel</button>
-        <button class="btn btn-primary" id="confirmOk"></button>
+        <button class="btn btn-ghost"    id="confirmCancel">Cancel</button>
+        <button class="btn btn-primary"  id="confirmOk"></button>
       </div>
     </div>
   </div>
@@ -843,8 +927,9 @@
   <!-- Toast -->
   <div class="toast" id="toastEl"></div>
 
-  <!-- ⑥ Application logic (app.js) -->
+  <!-- Scripts -->
   <script src="app.js"></script>
+  <script src="prompts.js"></script>
+  <script src="tasks.js"></script>
 </body>
-
 </html>
