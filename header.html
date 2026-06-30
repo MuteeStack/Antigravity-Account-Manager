@@ -2,43 +2,322 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <title>Header – Antigravity</title>
+  <title>Add Panel – Antigravity</title>
   <link rel="stylesheet" href="styles.css"/>
   <style>
-    /* ── Header component ── */
-    .header {
+    /* ── Add Panel ── */
+    .add-panel {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .add-panel.visible { display: block; }
+
+    .panel-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-group label {
+      font-size: 11px;
+      color: #555;
+      letter-spacing: .4px;
+    }
+
+    .input-status-wrap { width: 140px; }
+    .input-date-wrap   { width: 190px; }
+    .input-time-wrap   { width: 160px; }
+
+    .date-time-group         { display: flex; gap: 10px; flex-wrap: wrap; }
+    .date-time-group.hidden  { display: none; }
+
+    /* ── Status dropdown ── */
+    .status-dropdown {
+      width: 150px;
+      padding: 5px;
+    }
+    .status-option {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 36px;
-      gap: 16px;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: background .12s;
     }
-    .header-title {
-      font-size: 17px;
-      font-weight: 600;
-      color: #fff;
-      letter-spacing: -.2px;
-    }
-    .header-title span { color: var(--orange); }
-    .header-actions    { display: flex; gap: 8px; flex-shrink: 0; }
+    .status-option + .status-option { margin-top: 2px; }
+    .status-option:hover    { background: rgba(255,255,255,.07); }
+    .status-option:active   { background: rgba(255,255,255,.12); }
+    .status-option.selected { background: rgba(255,255,255,.06); }
 
+    /* ── Calendar dropdown ── */
+    .cal-dropdown { width: 310px; padding: 20px; }
+    .cal-header   { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .cal-month-label { font-size: 15px; font-weight: 600; color: #fff; }
+    .cal-nav         { display: flex; gap: 6px; }
+    .cal-nav-btn {
+      width: 32px; height: 32px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: transparent;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-size: 15px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s, color .15s;
+    }
+    .cal-nav-btn:hover { background: rgba(255,255,255,.06); color: #fff; }
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      text-align: center;
+    }
+    .cal-dow {
+      font-size: 10px; font-weight: 600; color: var(--text-off);
+      text-transform: uppercase; padding: 6px 0 10px; letter-spacing: .5px;
+    }
+    .cal-day {
+      padding: 0; border-radius: 50%; font-size: 14px; cursor: pointer;
+      color: var(--text); transition: background .15s, color .15s;
+      width: 34px; height: 34px;
+      display: flex; align-items: center; justify-content: center; margin: 0 auto;
+    }
+    .cal-day:hover        { background: rgba(255,255,255,.08); }
+    .cal-day.other-month  { color: var(--text-dead); }
+    .cal-day.today        { color: var(--orange); font-weight: 700; }
+    .cal-day.selected     { background: var(--orange); color: #1e1e1e; font-weight: 700; }
+    .cal-footer {
+      display: flex; justify-content: space-between;
+      margin-top: 16px; padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .cal-link {
+      font-size: 13px; color: var(--text-dim); cursor: pointer; font-weight: 500;
+      transition: color .15s;
+    }
+    .cal-link:hover { color: var(--orange); }
+
+    /* ── Time dropdown – iOS wheel ── */
+    .time-dropdown {
+      width: 252px;
+      padding: 0;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    /* Inner wrapper adds its own padding so the glass clips cleanly */
+    .time-picker-inner {
+      padding: 14px 14px 16px;
+    }
+
+    .time-cols {
+      display: flex;
+      gap: 0;
+      height: 216px;
+      position: relative;
+    }
+
+    /* Top / bottom fade masks */
+    .time-cols::before,
+    .time-cols::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0;
+      height: 72px;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .time-cols::before {
+      top: 0;
+      background: linear-gradient(to bottom, rgba(30,30,32,.97) 0%, transparent 100%);
+    }
+    .time-cols::after {
+      bottom: 0;
+      background: linear-gradient(to top, rgba(30,30,32,.97) 0%, transparent 100%);
+    }
+
+    /* Center selection bar */
+    .center-bar {
+      position: absolute;
+      top: 50%; left: 8px; right: 8px;
+      height: 42px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 10px;
+      transform: translateY(-50%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .time-col {
+      flex: 1;
+      overflow-y: auto;
+      scroll-snap-type: y mandatory;
+      scrollbar-width: none;
+      position: relative;
+      /* top+bottom padding = (column height - item height) / 2 = (216-42)/2 = 87px */
+      padding: 87px 0;
+      z-index: 2;
+    }
+    .time-col::-webkit-scrollbar { display: none; }
+
+    .time-divider {
+      width: 1px;
+      background: rgba(255,255,255,.06);
+      flex-shrink: 0;
+      /* vertically center the divider within the visible scroll area */
+      margin: 72px 0;
+      z-index: 2;
+    }
+
+    .time-item {
+      text-align: center;
+      font-size: 15px;
+      cursor: pointer;
+      color: var(--text-dim);
+      transition: color .12s;
+      scroll-snap-align: center;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 6px;
+      border-radius: 8px;
+    }
+    .time-item:hover    { color: var(--text); }
+    .time-item.selected {
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    /* ── Mobile ── */
     @media (max-width: 768px) {
-      .header        { margin-bottom: 24px; }
-      .header-title  { font-size: 15px; }
+      .form-row          { flex-direction: column; }
+      .form-group,
+      .real-email,
+      .input-status-wrap,
+      .input-date-wrap,
+      .input-time-wrap   { width: 100% !important; }
+      .date-time-group   { flex-direction: column; gap: 14px; width: 100%; }
+      .fake-input        { width: 100%; border-radius: 14px; }
+      .add-panel         { padding: 16px; border-radius: 16px; }
+      .cal-dropdown      { width: 280px; padding: 16px; }
+      .time-dropdown     { width: 220px; }
     }
   </style>
 </head>
 <body>
   <!--
-    HEADER COMPONENT
-    Import this file's <style> block and copy the <header> HTML into index.html
+    ADD PANEL COMPONENT
+    Copy styles + HTML block into index.html
   -->
-  <header class="header">
-    <h1 class="header-title">Antigravity <span>Account Manager</span></h1>
-    <div class="header-actions">
-      <button class="btn btn-ghost" id="btnClearAll">Clear All</button>
-      <button class="btn btn-primary" id="btnAddAccount">+ Add</button>
+  <section class="add-panel" id="addPanel">
+    <p class="panel-label">New Account</p>
+    <div class="form-row" id="formRow">
+
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" class="real-email" id="inputEmail" placeholder="you@gmail.com" autocomplete="off"/>
+      </div>
+
+      <div class="form-group">
+        <label>Status</label>
+        <div class="input-status-wrap" style="position:relative;">
+          <div class="fake-input" id="statusTrigger">
+            <span class="status-dot dot-open" id="statusDot"></span>
+            <span class="fi-val" id="statusLabel">Open</span>
+            <span style="color:var(--text-dead);font-size:10px;flex-shrink:0;margin-left:2px;">&#9662;</span>
+          </div>
+          <div class="dropdown status-dropdown" id="statusDropdown">
+            <div class="status-option selected" data-val="Open">
+              <span class="status-dot dot-open"></span>
+              <span class="status-open-text">Open</span>
+            </div>
+            <div class="status-option" data-val="Closed">
+              <span class="status-dot dot-closed"></span>
+              <span class="status-closed-text">Closed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="date-time-group hidden" id="dateTimeGroup">
+        <div class="form-group">
+          <label>Open Date</label>
+          <div class="input-date-wrap" style="position:relative;">
+            <div class="fake-input" id="dateTrigger">
+              <i class="ph ph-calendar-blank"></i>
+              <span class="fi-val fi-placeholder" id="dateLabel">Pick a date</span>
+            </div>
+            <div class="dropdown cal-dropdown" id="calDropdown">
+              <div class="cal-header">
+                <span class="cal-month-label" id="calMonthLabel"></span>
+                <div class="cal-nav">
+                  <button class="cal-nav-btn" id="calPrev">&#8249;</button>
+                  <button class="cal-nav-btn" id="calNext">&#8250;</button>
+                </div>
+              </div>
+              <div class="cal-grid" id="calGrid"></div>
+              <div class="cal-footer">
+                <span class="cal-link" id="calClear">Clear</span>
+                <span class="cal-link" id="calToday">Today</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Open Time</label>
+          <div class="input-time-wrap" style="position:relative;">
+            <div class="fake-input" id="timeTrigger">
+              <i class="ph ph-clock"></i>
+              <span class="fi-val fi-placeholder" id="timeLabel">Pick a time</span>
+            </div>
+            <div class="dropdown time-dropdown" id="timeDropdown">
+              <div class="time-picker-inner">
+                <div class="time-cols">
+                  <div class="center-bar"></div>
+                  <div class="time-col" id="hourCol"></div>
+                  <div class="time-divider"></div>
+                  <div class="time-col" id="minCol"></div>
+                  <div class="time-divider"></div>
+                  <div class="time-col" id="periodCol"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group" style="justify-content:flex-end;">
+        <label style="visibility:hidden;font-size:11px;">&#x200E;</label>
+        <button class="btn btn-primary" id="btnSave"
+          style="height:48px;padding:0 20px;border-radius:14px;">Save</button>
+      </div>
+
     </div>
-  </header>
+  </section>
 </body>
 </html>
