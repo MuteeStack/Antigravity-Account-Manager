@@ -1,0 +1,183 @@
+/* ════════════════════════════════════════
+   ANTIGRAVITY — GLOBAL STYLES
+════════════════════════════════════════ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg:        #0e0e0e;
+  --surface:   #1C1C1E;
+  --surface2:  #2C2C2E;
+  --surface3:  #3A3A3C;
+  --border:    rgba(255,255,255,.06);
+  --border2:   rgba(255,255,255,.09);
+  --text:      #e0e0e0;
+  --text-dim:  #8E8E93;
+  --text-off:  #636366;
+  --text-dead: #48484a;
+  --orange:    #FF8C00;
+  --orange-glow: rgba(255,140,0,.15);
+  --green:     #4CAF50;
+  --red:       #ff4d4d;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", Inter, sans-serif;
+  font-size: 14px;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Phosphor Icons ── */
+i.ph, i.ph-fill {
+  font-size: 18px;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
+/* ── Page layout ── */
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 20px 60px;
+}
+
+/* ── Shared Buttons ── */
+.btn {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+  transition: opacity .15s;
+}
+.btn:hover  { opacity: .78; }
+.btn:active { opacity: .55; }
+
+.btn-primary {
+  background: var(--orange);
+  color: #0e0e0e;
+}
+.btn-ghost {
+  background: transparent;
+  color: #666;
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover {
+  color: var(--red);
+  border-color: rgba(255,77,77,.35);
+  opacity: 1;
+}
+
+/* ── Shared Inputs ── */
+.fake-input {
+  height: 48px;
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,.05);
+  border-radius: 14px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  padding: 0 18px;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: border-color .25s, box-shadow .25s;
+  position: relative;
+}
+.fake-input:hover       { border-color: rgba(255,255,255,.12); }
+.fake-input.active      { border-color: var(--orange); box-shadow: 0 0 0 4px var(--orange-glow); }
+.fake-input .fi-val     { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fake-input .fi-placeholder { color: var(--text-dead); }
+
+.real-email {
+  height: 48px;
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 14px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  padding: 0 12px;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+  width: 240px;
+}
+.real-email:focus       { border-color: var(--orange); box-shadow: 0 0 0 3px var(--orange-glow); }
+.real-email::placeholder { color: var(--text-dead); }
+
+/* ── Base Dropdown (frosted glass) ── */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 300;
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  background: rgba(30, 30, 32, .97);
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 16px;
+  box-shadow:
+    0 2px 8px rgba(0,0,0,.3),
+    0 20px 60px rgba(0,0,0,.55);
+  display: none;
+  overflow: hidden;
+}
+.dropdown.open { display: block; }
+
+/* ── Status dot ── */
+.status-dot        { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.dot-open          { background: var(--green); }
+.dot-closed        { background: var(--orange); }
+.status-open-text  { color: var(--green); }
+.status-closed-text { color: var(--orange); }
+
+/* ── Date display inside fake-input ── */
+.fi-date-display              { display: flex; flex-direction: column; line-height: 1.3; }
+.fi-date-display .fi-day-name { font-size: 13px; color: #fff; font-weight: 500; }
+.fi-date-display .fi-date-sub { font-size: 11px; color: var(--text-dim); }
+.fi-time-display              { font-size: 15px; color: #fff; font-weight: 500; }
+
+/* ── Toast ── */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,.08);
+  color: var(--text);
+  padding: 12px 20px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity .2s, transform .2s;
+  pointer-events: none;
+  z-index: 500;
+  white-space: nowrap;
+  box-shadow: 0 8px 30px rgba(0,0,0,.4);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .page           { padding: 24px 14px 48px; }
+  .btn            { height: 34px; font-size: 12px; padding: 0 12px; }
+  .real-email     { width: 100%; }
+}
