@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Accounts Table – Antigravity</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    /* ── Table Card ── */
+    .table-card {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,.04);
+      border-radius: 18px;
+      overflow: visible;
+    }
+    .table-scroll { overflow: visible; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 520px;
+    }
+
+    thead th {
+      padding: 14px 18px;
+      text-align: center;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-off);
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    /* First column (email) stays left-aligned */
+    thead th:first-child { text-align: left; }
+
+    tbody tr {
+      border-bottom: 1px solid rgba(255,255,255,.04);
+      transition: background .1s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover      { background: rgba(255,255,255,.03); }
+
+    tbody td {
+      padding: 14px 18px;
+      font-size: 13px;
+      color: #ccc;
+      vertical-align: middle;
+      text-align: center;
+    }
+
+    /* Email stays left */
+    tbody td:first-child { text-align: left; }
+
+    .email-cell { color: #f2f2f7; word-break: break-all; }
+
+    /* ── Status pill in table ── */
+    .tbl-status-wrap {
+      position: relative;
+      display: inline-block;
+    }
+    .tbl-status-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 24px 6px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      background-color: var(--surface2);
+      background-repeat: no-repeat;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M1 1l3 3 3-3' stroke='%23666' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-position: right 8px center;
+      border: 1px solid rgba(255,255,255,.05);
+      transition: opacity .15s;
+    }
+    .tbl-status-btn:hover       { opacity: .85; background-color: var(--surface3); }
+    .tbl-status-btn.open-pill   { color: var(--green); }
+    .tbl-status-btn.closed-pill { color: var(--orange); }
+
+    .tbl-status-dropdown { width: 150px; padding: 5px; }
+
+    /* shared status-option styles come from add-panel.html / index.html */
+    .status-option {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 10px;
+      cursor: pointer; font-size: 13px; font-weight: 500;
+      transition: background .12s;
+    }
+    .status-option + .status-option { margin-top: 2px; }
+    .status-option:hover    { background: rgba(255,255,255,.07); }
+    .status-option.selected { background: rgba(255,255,255,.06); }
+
+    /* ── Inline date / time in table ── */
+    .inline-dt {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      font-size: 12px;
+      color: var(--text-dim);
+      transition: border-color .15s, background .15s, color .15s;
+      background-color: rgba(255,255,255,.03);
+    }
+    .inline-dt:hover {
+      border-color: rgba(255,255,255,.08);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+    }
+    .inline-dt .idt-icon { color: var(--text-dim); font-size: 14px; display: flex; align-items: center; }
+    .inline-dt .idt-icon i { width: 15px; height: 15px; }
+
+    .tbl-dt-dropdown   { min-width: 310px; }
+    .tbl-time-dropdown { min-width: 252px; }
+
+    /* Calendar inside table rows — same classes as add-panel */
+    .cal-dropdown { width: 310px; padding: 20px; }
+    .cal-header   { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .cal-month-label { font-size: 15px; font-weight: 600; color: #fff; }
+    .cal-nav { display: flex; gap: 6px; }
+    .cal-nav-btn {
+      width: 32px; height: 32px; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.08); background: transparent;
+      color: var(--text-dim); cursor: pointer; font-size: 15px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s, color .15s;
+    }
+    .cal-nav-btn:hover { background: rgba(255,255,255,.06); color: #fff; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; text-align: center; }
+    .cal-dow  { font-size:10px; font-weight:600; color:var(--text-off); text-transform:uppercase; padding:6px 0 10px; letter-spacing:.5px; }
+    .cal-day  {
+      padding:0; border-radius:50%; font-size:14px; cursor:pointer; color:var(--text);
+      transition:background .15s,color .15s; width:34px; height:34px;
+      display:flex; align-items:center; justify-content:center; margin:0 auto;
+    }
+    .cal-day:hover        { background: rgba(255,255,255,.08); }
+    .cal-day.other-month  { color: var(--text-dead); }
+    .cal-day.today        { color: var(--orange); font-weight:700; }
+    .cal-day.selected     { background: var(--orange); color:#1e1e1e; font-weight:700; }
+    .cal-footer { display:flex; justify-content:space-between; margin-top:16px; padding-top:14px; border-top:1px solid var(--border); }
+    .cal-link   { font-size:13px; color:var(--text-dim); cursor:pointer; font-weight:500; transition:color .15s; }
+    .cal-link:hover { color: var(--orange); }
+
+    /* Time picker inside table rows */
+    .time-dropdown {
+      width: 252px;
+      padding: 0;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .time-picker-inner { padding: 14px 14px 16px; }
+    .time-cols {
+      display: flex; height: 216px; position: relative;
+    }
+    .time-cols::before,
+    .time-cols::after {
+      content:''; position:absolute; left:0; right:0; height:72px; pointer-events:none; z-index:3;
+    }
+    .time-cols::before { top:0; background:linear-gradient(to bottom,rgba(30,30,32,.97),transparent); }
+    .time-cols::after  { bottom:0; background:linear-gradient(to top,rgba(30,30,32,.97),transparent); }
+    .center-bar {
+      position:absolute; top:50%; left:8px; right:8px; height:42px;
+      background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.08);
+      border-radius:10px; transform:translateY(-50%); pointer-events:none; z-index:1;
+    }
+    .time-col {
+      flex:1; overflow-y:auto; scroll-snap-type:y mandatory; scrollbar-width:none;
+      position:relative; padding:87px 0; z-index:2;
+    }
+    .time-col::-webkit-scrollbar { display:none; }
+    .time-divider { width:1px; background:rgba(255,255,255,.06); flex-shrink:0; margin:72px 0; z-index:2; }
+    .time-item {
+      text-align:center; font-size:15px; cursor:pointer; color:var(--text-dim);
+      transition:color .12s; scroll-snap-align:center;
+      height:42px; display:flex; align-items:center; justify-content:center;
+      margin:0 6px; border-radius:8px;
+    }
+    .time-item:hover    { color:var(--text); }
+    .time-item.selected { color:#fff; font-size:16px; font-weight:600; }
+
+    /* ── Delete button ── */
+    .btn-delete {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      background: rgba(255, 77, 77, 0.08);
+      border: 1px solid rgba(255, 77, 77, 0.15);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      color: #ff6b6b;
+      cursor: pointer;
+      padding: 5px 10px;
+      letter-spacing: .2px;
+      transition: background .15s, border-color .15s, color .15s;
+    }
+    .btn-delete:hover {
+      background: rgba(255, 77, 77, 0.18);
+      border-color: rgba(255, 77, 77, 0.4);
+      color: #ff4d4d;
+    }
+    .btn-delete:active {
+      background: rgba(255, 77, 77, 0.28);
+    }
+    .btn-delete i {
+      font-size: 13px;
+      color: inherit;
+    }
+
+    /* ── Empty state ── */
+    .empty-state { padding: 56px 20px; text-align: center; }
+    .empty-state p { font-size: 13px; color: var(--text-dead); margin-bottom: 4px; }
+    .empty-state p:first-child { font-size: 14px; color: var(--text-off); }
+
+    .dash { color: var(--text-dead); }
+
+    @media (max-width: 768px) {
+      thead th { font-size: 9px; padding: 10px 12px; }
+      tbody td { padding: 11px 12px; }
+      .cal-dropdown      { width: 280px; }
+      .time-dropdown     { width: 220px; }
+    }
+    @media (max-width: 600px) {
+      .cal-dropdown  { width: 280px; padding: 16px; }
+      .time-dropdown { width: 220px; }
+    }
+  </style>
+</head>
+<body>
+  <!--
+    ACCOUNTS TABLE COMPONENT
+    Copy styles + HTML block into index.html
+  -->
+  <div class="table-card">
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Email Address</th>
+            <th>Status</th>
+            <th>Open Date</th>
+            <th>Open Time</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="accountsBody"></tbody>
+      </table>
+    </div>
+    <div class="empty-state" id="emptyState">
+      <p>No accounts</p>
+      <p>Click <span style="color:var(--orange);">+ Add</span> to get started</p>
+    </div>
+  </div>
+</body>
+</html>
