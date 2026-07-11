@@ -17,7 +17,7 @@
 <div align="center">
 
 ### 📋 Accounts Tab
-![Accounts Tab](screenshots/accounts-tab.png)
+![Accounts Tab](accounts-tab.png)
 
 ### ✍️ My Prompts Tab
 ![Prompts Tab](screenshots/prompts-tab.png)
