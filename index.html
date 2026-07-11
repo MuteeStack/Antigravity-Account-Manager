@@ -199,7 +199,7 @@
        TABLE  (table.html)
     ════════════════════════════════════════ */
     .table-card   { background:var(--surface); border:1px solid rgba(255,255,255,.04); border-radius:18px; overflow:visible; }
-    .table-scroll { overflow:visible; }
+    .table-scroll { overflow-x:auto; }
     table         { width:100%; border-collapse:collapse; min-width:520px; }
 
     thead th {
@@ -284,8 +284,10 @@
        RESPONSIVE
     ════════════════════════════════════════ */
     @media (max-width:768px) {
-      .header         { margin-bottom:24px; }
-      .header-title   { font-size:15px; }
+      .header         { margin-bottom:24px; flex-direction:column; align-items:flex-start; gap:12px; }
+      .header-title   { display:block; font-size:16px; }
+      .nav-text       { display:none; }
+      .tab-btn        { padding: 8px 12px; }
       .form-row       { flex-direction:column; }
       .form-group, .real-email,
       .input-status-wrap, .input-date-wrap,
@@ -295,11 +297,11 @@
       .add-panel       { padding:16px; border-radius:16px; }
       thead th         { font-size:9px; padding:10px 12px; }
       tbody td         { padding:11px 12px; }
-      .cal-dropdown    { width:280px; }
+      .cal-dropdown    { width:300px; }
       .time-dropdown   { width:220px; }
     }
     @media (max-width:600px) {
-      .cal-dropdown  { width:280px; padding:16px; }
+      .cal-dropdown  { width:300px; padding:16px; }
       .time-dropdown { width:220px; }
       .confirm-card  { border-radius:18px; padding:24px 22px 20px; }
     }
@@ -376,6 +378,8 @@
       line-height: 1.6;
       min-height: 110px;
       padding: 12px 14px;
+      word-break: break-word;
+      overflow-wrap: anywhere;
     }
     .quill-wrap .ql-editor.ql-blank::before {
       color: var(--text-dead);
@@ -401,6 +405,10 @@
       border-radius: 10px;
       color: var(--text);
       box-shadow: 0 10px 30px rgba(0,0,0,.4);
+      max-width: calc(100% - 20px);
+      left: 10px !important;
+      white-space: normal;
+      word-break: break-all;
     }
     .quill-wrap .ql-snow .ql-tooltip input[type=text] {
       background: var(--surface2);
@@ -730,13 +738,13 @@
     <!-- ══ TAB NAV ══ -->
     <nav class="tab-nav">
       <button class="tab-btn active" data-tab="accounts">
-        <i class="ph ph-users"></i> Antigravity
+        <i class="ph ph-users"></i> <span class="nav-text">Antigravity</span>
       </button>
       <button class="tab-btn" data-tab="prompts">
-        <i class="ph ph-sparkle"></i> My Prompts
+        <i class="ph ph-sparkle"></i> <span class="nav-text">My Prompts</span>
       </button>
       <button class="tab-btn" data-tab="tasks">
-        <i class="ph ph-check-square"></i> Tasks
+        <i class="ph ph-check-square"></i> <span class="nav-text">Tasks</span>
       </button>
     </nav>
 
