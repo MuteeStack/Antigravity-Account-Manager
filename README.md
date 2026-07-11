@@ -20,10 +20,10 @@
 ![Accounts Tab](accounts-tab.png)
 
 ### ✍️ My Prompts Tab
-![Prompts Tab](screenshots/prompts-tab.png)
+![Prompts Tab](prompts-tab.png)
 
 ### ✅ Daily Tasks Tab
-![Tasks Tab](screenshots/tasks-tab.png)
+![Tasks Tab](tasks-tab.png)
 
 </div>
 
