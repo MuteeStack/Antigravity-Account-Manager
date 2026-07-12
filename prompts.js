@@ -22,30 +22,37 @@ const QUILL_TOOLBAR = [['bold', 'italic', 'underline'], ['link', 'image'], ['cle
 /* ── Robust copy-to-clipboard with fallback ── */
 function copyText(text) {
   return new Promise((resolve, reject) => {
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(text).then(resolve).catch(() => fallbackCopy(text, resolve, reject));
+    let success = false;
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      // Prevent scrolling and zooming
+      ta.style.position = 'fixed';
+      ta.style.top = '0';
+      ta.style.left = '0';
+      ta.style.width = '2em';
+      ta.style.height = '2em';
+      ta.style.padding = '0';
+      ta.style.border = 'none';
+      ta.style.outline = 'none';
+      ta.style.boxShadow = 'none';
+      ta.style.background = 'transparent';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      ta.setSelectionRange(0, 999999); // iOS requirement
+      success = document.execCommand('copy');
+      document.body.removeChild(ta);
+    } catch (err) {}
+
+    if (success) {
+      resolve();
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(resolve).catch(reject);
     } else {
-      fallbackCopy(text, resolve, reject);
+      reject(new Error('Copy failed'));
     }
   });
-}
-
-function fallbackCopy(text, resolve, reject) {
-  try {
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.left = '-9999px';
-    ta.style.top = '0';
-    document.body.appendChild(ta);
-    ta.focus();
-    ta.select();
-    const ok = document.execCommand('copy');
-    document.body.removeChild(ta);
-    ok ? resolve() : reject(new Error('execCommand failed'));
-  } catch (err) {
-    reject(err);
-  }
 }
 
 /* ── DOM refs ── */
