@@ -61,7 +61,7 @@ taskPriorityDropdown.querySelectorAll('.status-option').forEach(opt => {
 function setTaskPriority(val) {
   taskPriority = val;
   taskPriorityLabel.textContent = val;
-  taskPriorityDot.className = 'priority-dot ' + ({High:'prio-high', Medium:'prio-med', Low:'prio-low'}[val]);
+  taskPriorityDot.className = 'priority-dot ' + ({High:'prio-high', Medium:'prio-med', Low:'prio-low'}[val] || 'prio-low');
   taskPriorityDropdown.querySelectorAll('.status-option').forEach(o => o.classList.toggle('selected', o.dataset.val === val));
 }
 
@@ -183,12 +183,12 @@ function renderTasks() {
     const dueDisp = t.due ? formatDateDisplay(isoToDateObj(t.due)) : null;
     const overdue = isOverdue(t);
 
-    const prioClass = { High:'priority-high-text', Medium:'priority-med-text', Low:'priority-low-text' }[t.priority];
-    const prioDotClass = { High:'prio-high', Medium:'prio-med', Low:'prio-low' }[t.priority];
+    const prioClass = { High:'priority-high-text', Medium:'priority-med-text', Low:'priority-low-text' }[t.priority] || 'priority-low-text';
+    const prioDotClass = { High:'prio-high', Medium:'prio-med', Low:'prio-low' }[t.priority] || 'prio-low';
 
     card.innerHTML = `
       <div class="task-check ${t.done?'checked':''}" data-id="${t.id}">
-        ${t.done ? '<i class="ph ph-check-bold"></i>' : ''}
+        ${t.done ? '<i class="ph ph-check" style="font-weight: bold"></i>' : ''}
       </div>
       <div class="task-body">
         <div class="task-name">${escT(t.title)}</div>
@@ -259,7 +259,11 @@ function enterTaskEditMode(card, id) {
   body.innerHTML = `
     <input type="text" class="prompt-edit-title" id="te-title-${id}" value="${escT(t.title)}" placeholder="Task description"/>
     <div class="task-edit-meta-row">
-      <select class="task-edit-select" id="te-priority-${id}">${prioOptionsHtml}</select>
+      <select class="task-edit-select" id="te-priority-${id}">
+        <option value="High" ${t.priority==='High'?'selected':''}>High</option>
+        <option value="Medium" ${t.priority==='Medium'?'selected':''}>Medium</option>
+        <option value="Low" ${t.priority==='Low'?'selected':''}>Low</option>
+      </select>
       <div class="input-date-wrap" style="position:relative;width:180px;">
         <div class="fake-input" id="te-date-trigger-${id}" style="height:38px;">
           <i class="ph ph-calendar-blank"></i>
